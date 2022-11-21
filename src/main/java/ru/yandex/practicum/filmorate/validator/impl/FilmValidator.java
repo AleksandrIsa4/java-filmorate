@@ -7,13 +7,13 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 
-public class FilmValidator implements ConstraintValidator<FilmValid, Film> {
+public class FilmValidator implements ConstraintValidator<FilmValid, LocalDate> {
     private static final LocalDate BEGIN_MOVIE = LocalDate.of(1895, 12, 28);
     boolean isDate;
 
     @Override
-    public boolean isValid(Film film, ConstraintValidatorContext context) {
-        isDate = film.getReleaseDate().isAfter(LocalDate.of(1895, 12, 28));
+    public boolean isValid(LocalDate releaseDate, ConstraintValidatorContext context) {
+        isDate = releaseDate.isAfter(LocalDate.of(1895, 12, 28));
         if (isDate) {
             return true;
         } else {

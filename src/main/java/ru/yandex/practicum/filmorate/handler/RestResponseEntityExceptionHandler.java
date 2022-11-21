@@ -61,7 +61,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         List<String> errors = ex.getBindingResult()
                 .getAllErrors()
                 .stream()
-        .map(this::getErrorString).collect(toList());
+                .map(this::getErrorString).collect(toList());
         body.put(REASONS, errors);
         log.error(errors.toString());
         return new ResponseEntity<>(body, headers, status);

@@ -14,13 +14,13 @@ public class FilmValidatorTest {
     @Test
     void createUserFailName() {
         Film film = getFilmRequest("", "adipisicing", LocalDate.parse("1967-03-25"), 100);
-        Assertions.assertTrue(dtoHasErrorMessage(film, " Film не может быть пустым"));
+        Assertions.assertTrue(dtoHasErrorMessage(film, "Film не может быть пустым"));
     }
 
     @Test
     void createUserFailDescription() {
         Film film = getFilmRequest("nisi eiusmod", "Пятеро друзей ( комик-группа «Шарло»), приезжают в город Бризуль. Здесь они хотят разыскать господина Огюста Куглова, который задолжал им деньги, а именно 20 миллионов. о Куглов, который за время «своего отсутствия», стал кандидатом Коломбани.", LocalDate.parse("1967-03-25"), 100);
-        Assertions.assertTrue(dtoHasErrorMessage(film, " Film не может быть длиннее 200 символов"));
+        Assertions.assertTrue(dtoHasErrorMessage(film, "Film не может быть длиннее 200 символов"));
     }
 
     @Test
@@ -32,6 +32,6 @@ public class FilmValidatorTest {
     @Test
     void createUserFailDuration() {
         Film film = getFilmRequest("nisi eiusmod", "adipisicing", LocalDate.parse("1967-03-25"), -100);
-        Assertions.assertTrue(dtoHasErrorMessage(film, " Film не может быть отрицательным"));
+        Assertions.assertTrue(dtoHasErrorMessage(film, "Film не может быть отрицательным"));
     }
 }

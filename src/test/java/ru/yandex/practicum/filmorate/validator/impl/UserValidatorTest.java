@@ -16,8 +16,8 @@ public class UserValidatorTest {
         User user1 = getUserRequest(null, "mail@mail.ru", "Nick Name", LocalDate.parse("1946-08-20"));
         User user2 = getUserRequest("dol ore", "mail@mail.ru", "Nick Name", LocalDate.parse("1946-08-20"));
         Assertions.assertAll(
-                () -> Assertions.assertTrue(dtoHasErrorMessage(user1, " User не может быть пустым")),
-                () -> Assertions.assertTrue(dtoHasErrorMessage(user2, "login не должен содержать пробелы"))
+                () -> Assertions.assertTrue(dtoHasErrorMessage(user1, "User не может быть пустым")),
+                () -> Assertions.assertTrue(dtoHasErrorMessage(user2, "User не должен содержать пробелы"))
         );
     }
 
@@ -26,14 +26,14 @@ public class UserValidatorTest {
         User user1 = getUserRequest("dolore", null, "Nick Name", LocalDate.parse("1946-08-20"));
         User user2 = getUserRequest("dolore", "mailmail.ru", "Nick Name", LocalDate.parse("1946-08-20"));
         Assertions.assertAll(
-                () -> Assertions.assertTrue(dtoHasErrorMessage(user1, " User не может быть пустым")),
-                () -> Assertions.assertTrue(dtoHasErrorMessage(user2, " User должен быть в виде email"))
+                () -> Assertions.assertTrue(dtoHasErrorMessage(user1, "User не может быть пустым")),
+                () -> Assertions.assertTrue(dtoHasErrorMessage(user2, "User должен быть в виде email"))
         );
     }
 
     @Test
     void createUserFailBirthday() {
         User user1 = getUserRequest("dolore", "mail@mail.ru", "Nick Name", LocalDate.parse("2246-08-20"));
-        Assertions.assertTrue(dtoHasErrorMessage(user1, " User не может быть в будущем"));
+        Assertions.assertTrue(dtoHasErrorMessage(user1, "User не может быть в будущем"));
     }
 }
