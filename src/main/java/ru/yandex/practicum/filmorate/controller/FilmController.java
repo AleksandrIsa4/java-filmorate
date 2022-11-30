@@ -1,18 +1,18 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
-@Slf4j
 @Validated
 @RestController
 @RequestMapping(
@@ -22,38 +22,78 @@ import java.util.*;
 )
 public class FilmController {
 
-    private int generator = 0;
-    private final Map<Integer, Film> films = new HashMap<>();
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Film filmAdd(@RequestBody @Valid @NotNull Film film) {
-        additionFilm(film);
-        films.put(film.getId(), film);
-        log.info("Получен POST Film");
-        return film;
+        return filmService.saveFilm(film);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> filmUpdate(@RequestBody @Valid @NotNull Film film) {
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-            log.info("Получен PUT Film");
-            return new ResponseEntity<>(film, HttpStatus.OK);
+        Film currentFilm=filmService.changeFilm(film);
+        if (currentFilm==null){
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("Запись не найдена с id ", film.getId());
+            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("Запись не найдена с id ", film.getId());
-        body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(currentFilm, HttpStatus.OK);
     }
 
     @GetMapping
     public Collection<Film> filmAll() {
-        return films.values();
+        return filmService.getFilms();
     }
 
-    private void additionFilm(Film film) {
-        if (film.getId() == 0) {
-            film.setId(++generator);
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> filmId(@PathVariable("id") @NotNull Integer id) {
+        Film currentFilm=filmService.getFilm(id);
+        if (currentFilm==null){
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("Запись не найдена с id ", id);
+            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(currentFilm, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{id}/like/{userId}")
+    public ResponseEntity<?> userFriendsUpdate(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
+        // Если idBody не Null, значит один из Id не найден
+        Integer idBody = filmService.changeLike(id, userId);
+        if (idBody != null) {
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("Запись не найдена с id ", idBody);
+            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(filmService.getFilm(id), HttpStatus.OK);
+        }
+    }
+
+    @DeleteMapping(value = "/{id}/like/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> userFriendsDelete(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
+        // Если idBody не Null, значит один из пользователей с Id не найден
+        Integer idBody = filmService.deleteLike(id, userId);
+        if (idBody != null) {
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("Запись не найдена с id ", idBody);
+            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(filmService.getFilm(id), HttpStatus.OK);
+        }
+    }
+
+    @GetMapping(value = "/popular", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> filmPopular(@RequestParam(required = false) Integer count) {
+        List<Film> popularFilms =filmService.popularFilm(count);
+        return new ResponseEntity<>(popularFilms, HttpStatus.OK);
     }
 }

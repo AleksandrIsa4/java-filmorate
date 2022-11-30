@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.validator.FilmValid;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -21,4 +23,16 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Film не может быть отрицательным")
     private long duration;
+    private Set<Integer> like=new HashSet<>();
+    private int rate;
+
+    public void addLike (Integer id){
+        like.add(id);
+        rate++;
+    }
+
+    public void deleteLike (Integer id){
+        like.remove(id);
+        rate--;
+    }
 }
