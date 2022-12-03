@@ -23,13 +23,5 @@ public class User {
     private String name;
     @Past(message = "User не может быть в будущем")
     private LocalDate birthday;
-     private Set<Integer> friends=new HashSet<>();
-
-    public void addFriend(Integer id){
-        friends.add(id);
-    }
-
-    public void deleteFriend(Integer id){
-        friends.remove(id);
-    }
+    private Set<Integer> friends = new HashSet<>();
 }

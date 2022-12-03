@@ -94,7 +94,7 @@ public class UserController {
 
     @GetMapping(value = "/{id}/friends", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> userIdFriend(@PathVariable("id") @NotNull Integer id) {
-        List<User> friends =userService.getUserFriend(id);
+        List<User> friends = userService.getUserFriend(id);
         if (friends == null) {
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("Запись не найдена с id ", id);
@@ -106,7 +106,7 @@ public class UserController {
 
     @GetMapping(value = "/{id}/friends/common/{otherId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> usersCommonFriend(@PathVariable("id") @NotNull Integer id, @PathVariable("otherId") @NotNull Integer otherId) {
-        List<User> friends =userService.getCommonFriend(id,otherId);
+        List<User> friends = userService.getCommonFriend(id, otherId);
         if (friends == null) {
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("Возможно не найдена запись id User ", id);

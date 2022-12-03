@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -11,16 +11,11 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FilmService {
 
     private final FilmStorage inMemoryFilmStorage;
     private final UserService userService;
-
-    @Autowired
-    public FilmService(FilmStorage inMemoryFilmStorage,UserService userService) {
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
-        this.userService = userService;
-    }
 
     public Film saveFilm(Film film) {
         log.info("Получен POST Film");
@@ -47,10 +42,10 @@ public class FilmService {
     }
 
     public Integer changeLike(Integer id, Integer userId) {
-        if (getFilm(id)==null){
+        if (getFilm(id) == null) {
             return id;
         }
-        if (userService.getUser(userId)==null){
+        if (userService.getUser(userId) == null) {
             return userId;
         }
         inMemoryFilmStorage.addLikeUser(id, userId);
@@ -59,10 +54,10 @@ public class FilmService {
     }
 
     public Integer deleteLike(Integer id, Integer userId) {
-        if (getFilm(id)==null){
+        if (getFilm(id) == null) {
             return id;
         }
-        if (userService.getUser(userId)==null){
+        if (userService.getUser(userId) == null) {
             return userId;
         }
         inMemoryFilmStorage.deleteLikeUser(id, userId);
@@ -70,7 +65,7 @@ public class FilmService {
     }
 
     public List<Film> popularFilm(Integer count) {
-        if (count==null){
+        if (count == null) {
             return inMemoryFilmStorage.countPopularFilm(10);
         } else {
             return inMemoryFilmStorage.countPopularFilm(count);

@@ -36,8 +36,8 @@ public class FilmController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> filmUpdate(@RequestBody @Valid @NotNull Film film) {
-        Film currentFilm=filmService.changeFilm(film);
-        if (currentFilm==null){
+        Film currentFilm = filmService.changeFilm(film);
+        if (currentFilm == null) {
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("Запись не найдена с id ", film.getId());
             body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
@@ -53,8 +53,8 @@ public class FilmController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> filmId(@PathVariable("id") @NotNull Integer id) {
-        Film currentFilm=filmService.getFilm(id);
-        if (currentFilm==null){
+        Film currentFilm = filmService.getFilm(id);
+        if (currentFilm == null) {
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("Запись не найдена с id ", id);
             body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
@@ -93,7 +93,7 @@ public class FilmController {
 
     @GetMapping(value = "/popular", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> filmPopular(@RequestParam(required = false) Integer count) {
-        List<Film> popularFilms =filmService.popularFilm(count);
+        List<Film> popularFilms = filmService.popularFilm(count);
         return new ResponseEntity<>(popularFilms, HttpStatus.OK);
     }
 }

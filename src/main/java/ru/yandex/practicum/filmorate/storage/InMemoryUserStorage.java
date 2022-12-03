@@ -12,16 +12,19 @@ public class InMemoryUserStorage implements UserStorage {
     private int generator = 0;
     private final Map<Integer, User> users = new HashMap<>();
 
+    @Override
     public void deleteUser(Integer id) {
         users.remove(id);
     }
 
+    @Override
     public User postUser(User user) {
         additionUser(user);
         users.put(user.getId(), user);
         return users.get(user.getId());
     }
 
+    @Override
     public User putUser(User user) {
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
@@ -30,10 +33,12 @@ public class InMemoryUserStorage implements UserStorage {
         return null;
     }
 
+    @Override
     public Collection<User> getMemoryUsers() {
         return users.values();
     }
 
+    @Override
     public User getUserId(Integer id) {
         if (users.containsKey(id)) {
             return users.get(id);
@@ -41,20 +46,31 @@ public class InMemoryUserStorage implements UserStorage {
         return null;
     }
 
-    public void addFriendId(Integer id,Integer friendId) {
-                users.get(id).addFriend(friendId);
-                users.get(friendId).addFriend(id);
+    @Override
+    public void addFriendId(Integer id, Integer friendId) {
+        Set<Integer> friends = users.get(id).getFriends();
+        friends.add(friendId);
+        users.get(id).setFriends(friends);
+        friends = users.get(friendId).getFriends();
+        friends.add(id);
+        users.get(friendId).setFriends(friends);
     }
 
-    public void deleteFriendId(Integer id,Integer friendId) {
-                users.get(id).deleteFriend(friendId);
-                users.get(friendId).deleteFriend(id);
+    @Override
+    public void deleteFriendId(Integer id, Integer friendId) {
+        Set<Integer> friends = users.get(id).getFriends();
+        friends.remove(friendId);
+        users.get(id).setFriends(friends);
+        friends = users.get(friendId).getFriends();
+        friends.remove(id);
+        users.get(friendId).setFriends(friends);
     }
 
+    @Override
     public List<User> getUserIdFriend(Integer id) {
-        List<User> friends= new ArrayList<>();
+        List<User> friends = new ArrayList<>();
         if (users.containsKey(id)) {
-            for(Integer i:users.get(id).getFriends()){
+            for (Integer i : users.get(id).getFriends()) {
                 friends.add(users.get(i));
             }
             return friends;
@@ -62,11 +78,12 @@ public class InMemoryUserStorage implements UserStorage {
         return null;
     }
 
-    public List<User> getUsersCommonFriends(Integer id,Integer otherId){
-        Set<Integer> friendsId=new HashSet<>(users.get(id).getFriends());
+    @Override
+    public List<User> getUsersCommonFriends(Integer id, Integer otherId) {
+        Set<Integer> friendsId = new HashSet<>(users.get(id).getFriends());
         friendsId.retainAll(users.get(otherId).getFriends());
-        List<User> friends=new ArrayList<>();
-        for(Integer i:friendsId){
+        List<User> friends = new ArrayList<>();
+        for (Integer i : friendsId) {
             friends.add(users.get(i));
         }
         return friends;

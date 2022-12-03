@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -11,14 +11,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserStorage inMemoryUserStorage;
-
-    @Autowired
-    public UserService(UserStorage inMemoryUserStorage) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
-    }
 
     public User saveUser(User user) {
         log.info("Получен POST User");
@@ -45,10 +41,10 @@ public class UserService {
     }
 
     public Integer changeFriend(Integer id, Integer friendId) {
-        if (getUser(id)==null){
+        if (getUser(id) == null) {
             return id;
         }
-        if (getUser(friendId)==null){
+        if (getUser(friendId) == null) {
             return friendId;
         }
         inMemoryUserStorage.addFriendId(id, friendId);
@@ -57,10 +53,10 @@ public class UserService {
     }
 
     public Integer deleteFriend(Integer id, Integer friendId) {
-        if (getUser(id)==null){
+        if (getUser(id) == null) {
             return id;
         }
-        if (getUser(friendId)==null){
+        if (getUser(friendId) == null) {
             return friendId;
         }
         inMemoryUserStorage.deleteFriendId(id, friendId);
@@ -72,6 +68,6 @@ public class UserService {
     }
 
     public List<User> getCommonFriend(Integer id, Integer otherId) {
-        return inMemoryUserStorage.getUsersCommonFriends(id,otherId);
+        return inMemoryUserStorage.getUsersCommonFriends(id, otherId);
     }
 }
