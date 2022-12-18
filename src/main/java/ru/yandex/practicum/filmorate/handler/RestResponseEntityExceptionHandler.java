@@ -32,7 +32,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     private static final String STATUS = "status";
     private static final String ERROR = "error";
     private static final String PATH = "path";
-
     private static final String REASONS = "reasons";
 
     @ExceptionHandler(value = ValidationException.class)
