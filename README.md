@@ -1,6 +1,6 @@
 # java-filmorate
 Template repository for Filmorate project.
-![Диаграмма БД](https://user-images.githubusercontent.com/108830655/209577613-c1e88940-a2c1-4218-ac4f-55f4489485fb.png)
+![Диаграмма БД](https://user-images.githubusercontent.com/108830655/209578935-745b8f5d-7e66-4d33-8ca1-302227dc4dd0.png)
 
 Примеры запросов:
 
