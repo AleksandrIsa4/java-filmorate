@@ -5,7 +5,7 @@ Template repository for Filmorate project.
 Примеры запросов:
 
 Добавление пользователя
-jdbcTemplate.update("INSERT INTO user_kino VALUES (?,?,?,?,?)", user.getId(), user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
+№ jdbcTemplate.update("INSERT INTO user_kino VALUES (?,?,?,?,?)", user.getId(), user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
 Изменение пользователя
 jdbcTemplate.update("UPDATE user_kino SET email=?, login=?, name=?, birthday=? WHERE user_id=?", user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
 Вывод всех пользователей
