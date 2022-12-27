@@ -37,3 +37,11 @@ jdbcTemplate.queryForRowSet("SELECT user_id FROM like_users WHERE user_id=? AND 
 jdbcTemplate.queryForRowSet("SELECT user_id FROM like_users WHERE user_id=? AND film_id=?", userId, id);  
 Вывод популярных фильмов  
 jdbcTemplate.queryForRowSet("SELECT film_id, rate FROM film GROUP BY film_id, rate ORDER BY rate DESC LIMIT ?",count);  
+
+
+Несколько комментариев с моей стороны.
+
+1. Например таблица like_users может иметь составной ключ из user_id и film_id и, по сути, поле id не нужно.
+Та же логика может быть применена и к таблицам genre_film и friends.
+2. В таблице film поле release_date хранит Localdate. Мне кажется лучше будет указать timestamp, потому что этот тип предназначен для работы с датой и временем, как писали в нашей лекции про типы данных в PostgreSQL.
+Больше добавить ничего не смогу.
