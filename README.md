@@ -40,6 +40,7 @@ jdbcTemplate.queryForRowSet("SELECT film_id, rate FROM film GROUP BY film_id, ra
 
 
 Р2Р проверка
+
 Несколько комментариев с моей стороны.
 
 1. Например таблица like_users может иметь составной ключ из user_id и film_id и, по сути, поле id не нужно.
