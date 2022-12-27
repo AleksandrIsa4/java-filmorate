@@ -39,6 +39,7 @@ jdbcTemplate.queryForRowSet("SELECT user_id FROM like_users WHERE user_id=? AND 
 jdbcTemplate.queryForRowSet("SELECT film_id, rate FROM film GROUP BY film_id, rate ORDER BY rate DESC LIMIT ?",count);  
 
 
+Р2Р проверка
 Несколько комментариев с моей стороны.
 
 1. Например таблица like_users может иметь составной ключ из user_id и film_id и, по сути, поле id не нужно.
