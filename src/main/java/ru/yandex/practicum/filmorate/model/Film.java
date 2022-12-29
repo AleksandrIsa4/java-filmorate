@@ -7,8 +7,7 @@ import ru.yandex.practicum.filmorate.validator.FilmValid;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -23,6 +22,8 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Film не может быть отрицательным")
     private long duration;
-    private Set<Integer> like = new HashSet<>();
+    private Set<Integer> like;
     private int rate;
+    private Rating mpa;
+    private List<Genre> genres;
 }

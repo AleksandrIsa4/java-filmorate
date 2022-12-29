@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -10,10 +12,12 @@ import java.util.Collection;
 import java.util.List;
 
 @Slf4j
-@Service
+@Service("userService")
 @RequiredArgsConstructor
 public class UserService {
 
+    @Autowired
+    @Qualifier("userDbStorage")
     private final UserStorage inMemoryUserStorage;
 
     public User saveUser(User user) {
@@ -47,6 +51,7 @@ public class UserService {
         if (getUser(friendId) == null) {
             return friendId;
         }
+
         inMemoryUserStorage.addFriendId(id, friendId);
         log.info("Получен друг PUT User");
         return null;

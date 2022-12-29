@@ -64,7 +64,7 @@ public class FilmController {
     }
 
     @PutMapping(value = "/{id}/like/{userId}")
-    public ResponseEntity<?> userFriendsUpdate(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
+    public ResponseEntity<?> userLikeAdd(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
         // Если idBody не Null, значит один из Id не найден
         Integer idBody = filmService.changeLike(id, userId);
         if (idBody != null) {
@@ -78,7 +78,7 @@ public class FilmController {
     }
 
     @DeleteMapping(value = "/{id}/like/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> userFriendsDelete(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
+    public ResponseEntity<?> userLikeDelete(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
         // Если idBody не Null, значит один из пользователей с Id не найден
         Integer idBody = filmService.deleteLike(id, userId);
         if (idBody != null) {

@@ -66,6 +66,12 @@ public class UserController {
 
     @PutMapping(value = "/{id}/friends/{friendId}")
     public ResponseEntity<?> userFriendsUpdate(@PathVariable("id") @NotNull Integer id, @PathVariable("friendId") @NotNull Integer friendId) {
+        if (id==friendId){
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("Запись повторяется c id ", id);
+            body.put("Код ошибки", HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        }
         // Если idBody не Null, значит один из пользователей с Id не найден
         Integer idBody = userService.changeFriend(id, friendId);
         if (idBody != null) {
@@ -80,6 +86,12 @@ public class UserController {
 
     @DeleteMapping(value = "/{id}/friends/{friendId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> userFriendsDelete(@PathVariable("id") @NotNull Integer id, @PathVariable("friendId") @NotNull Integer friendId) {
+        if (id==friendId){
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("Запись повторяется c id ", id);
+            body.put("Код ошибки", HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        }
         // Если idBody не Null, значит один из пользователей с Id не найден
         Integer idBody = userService.deleteFriend(id, friendId);
         if (idBody != null) {
