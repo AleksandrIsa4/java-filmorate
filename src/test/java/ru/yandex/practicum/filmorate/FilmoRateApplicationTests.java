@@ -19,7 +19,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @SpringBootTest
-@AutoConfigureTestDatabase( replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @ActiveProfiles("test")
 @Sql({"/schema.sql", "/data-test.sql"})

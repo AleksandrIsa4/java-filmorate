@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +20,10 @@ import java.util.*;
         consumes = MediaType.ALL_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
 )
-
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public User userAdd(@RequestBody @Valid User user) {
@@ -66,7 +61,7 @@ public class UserController {
 
     @PutMapping(value = "/{id}/friends/{friendId}")
     public ResponseEntity<?> userFriendsUpdate(@PathVariable("id") @NotNull Integer id, @PathVariable("friendId") @NotNull Integer friendId) {
-        if (id==friendId){
+        if (id == friendId) {
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("Запись повторяется c id ", id);
             body.put("Код ошибки", HttpStatus.BAD_REQUEST.value());
@@ -86,7 +81,7 @@ public class UserController {
 
     @DeleteMapping(value = "/{id}/friends/{friendId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> userFriendsDelete(@PathVariable("id") @NotNull Integer id, @PathVariable("friendId") @NotNull Integer friendId) {
-        if (id==friendId){
+        if (id == friendId) {
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("Запись повторяется c id ", id);
             body.put("Код ошибки", HttpStatus.BAD_REQUEST.value());

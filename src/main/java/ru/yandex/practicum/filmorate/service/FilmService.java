@@ -12,14 +12,13 @@ import java.util.Collection;
 import java.util.List;
 
 @Slf4j
-@Service("filmService")
+@Service
 @RequiredArgsConstructor
 public class FilmService {
 
     @Autowired
     @Qualifier("filmDbStorage")
     private final FilmStorage inMemoryFilmStorage;
-    @Autowired
     private final UserService userService;
 
     public Film saveFilm(Film film) {

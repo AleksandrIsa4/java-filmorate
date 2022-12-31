@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -9,13 +10,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Component
+@RequiredArgsConstructor
 public class GenresStorage {
 
     private final JdbcTemplate jdbcTemplate;
-
-    public GenresStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     public Collection<Genre> getAllGenres() {
         SqlRowSet genreRows = jdbcTemplate.queryForRowSet("SELECT * FROM genre");

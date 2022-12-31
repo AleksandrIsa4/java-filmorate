@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -9,13 +10,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Component
+@RequiredArgsConstructor
 public class MpaStorage {
 
     private final JdbcTemplate jdbcTemplate;
-
-    public MpaStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     public Collection<Rating> getAllMpa() {
         SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("SELECT * FROM mpa");

@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Slf4j
-@Service("userService")
+@Service
 @RequiredArgsConstructor
 public class UserService {
 

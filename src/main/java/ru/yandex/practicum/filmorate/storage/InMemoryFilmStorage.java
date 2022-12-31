@@ -7,8 +7,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component("inMemoryFilmStorage")
-
+@Component
 public class InMemoryFilmStorage implements FilmStorage {
 
     private int generator = 0;

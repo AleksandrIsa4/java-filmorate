@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +24,10 @@ import java.util.Map;
         consumes = MediaType.ALL_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
 )
+@RequiredArgsConstructor
 public class GenresController {
 
     private final GenresService genresService;
-
-    @Autowired
-    public GenresController(GenresService genresService) {
-        this.genresService = genresService;
-    }
 
     @GetMapping
     public Collection<Genre> genreAll() {

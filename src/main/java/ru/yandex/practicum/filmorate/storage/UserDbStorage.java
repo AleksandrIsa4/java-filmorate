@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.*;
 
-@Component("userDbStorage")
+@Component
 public class UserDbStorage implements UserStorage {
 
     private int generator = 0;

@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.*;
 
-@Component("filmDbStorage")
+@Component
 public class FilmDbStorage implements FilmStorage {
 
     private int generator = 0;
