@@ -21,6 +21,11 @@ public class FilmService {
     private final FilmStorage inMemoryFilmStorage;
     private final UserService userService;
 
+    public void deleteFilm(Integer id) {
+        log.info("Получен DELETE Film");
+        inMemoryFilmStorage.deleteFilm(id);
+    }
+
     public Film saveFilm(Film film) {
         log.info("Получен POST Film");
         return inMemoryFilmStorage.postFilm(film);

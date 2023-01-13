@@ -92,4 +92,10 @@ public class FilmController {
         List<Film> popularFilms = filmService.popularFilm(count);
         return new ResponseEntity<>(popularFilms, HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Integer> filmDelete(@PathVariable("id") @NotNull Integer id) {
+        filmService.deleteFilm(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
