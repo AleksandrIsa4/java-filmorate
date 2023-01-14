@@ -14,7 +14,6 @@ import java.util.*;
 public class FilmDbStorage implements FilmStorage {
 
     private int generator = 0;
-    private final Map<Integer, Film> films = new HashMap<>();
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,11 +30,10 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film postFilm(Film film) {
         additionFilm(film);
-        jdbcTemplate.update("INSERT INTO film VALUES (?,?,?,?,?,?,?)", film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getRate(), film.getMpa().getId());
+        jdbcTemplate.update("INSERT INTO film VALUES (?,?,?,?,?,?,?)", film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), 0, film.getMpa().getId());
         if (film.getGenres() != null) {
             Set<Genre> genreSet = Set.copyOf(film.getGenres());
             for (Genre genre : genreSet) {
-                // for (Genre genre : film.getGenres()) {
                 jdbcTemplate.update("INSERT INTO genre_film(film_id,genre_id) VALUES (?,?)", film.getId(), genre.getId());
             }
         }
@@ -46,7 +44,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film putFilm(Film film) {
-        jdbcTemplate.update("UPDATE film SET name=?, description=?, release_date=?, duration=?, rate=?, rating_id=? WHERE film_id=?", film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getRate(), film.getMpa().getId(), film.getId());
+        jdbcTemplate.update("UPDATE film SET name=?, description=?, release_date=?, duration=?, rating_id=? WHERE film_id=?", film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId(), film.getId());
         if (film.getGenres() != null) {
             // удаление всех жанров фильма перед новой записью
             jdbcTemplate.update("DELETE FROM genre_film WHERE film_id=?", film.getId());

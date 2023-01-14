@@ -20,6 +20,11 @@ public class UserService {
     @Qualifier("userDbStorage")
     private final UserStorage inMemoryUserStorage;
 
+    public void deleteUser(Integer id) {
+        log.info("Получен DELETE User");
+        inMemoryUserStorage.deleteUser(id);
+    }
+
     public User saveUser(User user) {
         log.info("Получен POST User");
         return inMemoryUserStorage.postUser(user);
@@ -69,6 +74,9 @@ public class UserService {
     }
 
     public List<User> getUserFriend(Integer id) {
+        if (getUser(id) == null) {
+            return null;
+        }
         return inMemoryUserStorage.getUserIdFriend(id);
     }
 

@@ -123,4 +123,10 @@ public class UserController {
         }
         return new ResponseEntity<>(friends, HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Integer> userDelete(@PathVariable("id") @NotNull Integer id) {
+        userService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
