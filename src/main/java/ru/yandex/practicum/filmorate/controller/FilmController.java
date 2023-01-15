@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -97,5 +99,12 @@ public class FilmController {
     public ResponseEntity<Integer> filmDelete(@PathVariable("id") @NotNull Integer id) {
         filmService.deleteFilm(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/director/{directorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getFilmsByDirectorId(@PathVariable int directorId,
+                                           @RequestParam String sortBy) {
+        List<Film> films = filmService.getFilmsByDirector(directorId, sortBy);
+        return new ResponseEntity<>(films, HttpStatus.OK);
     }
 }
