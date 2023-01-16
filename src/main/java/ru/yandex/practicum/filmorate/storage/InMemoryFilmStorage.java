@@ -74,6 +74,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return AllPopularFilm;
     }
 
+    @Override
+    public List<Film> getFilmsByDirector(int directorId, String sortType) {
+        throw new UnsupportedOperationException();
+    }
+
     private void additionFilm(Film film) {
         if (film.getId() == 0) {
             film.setId(++generator);

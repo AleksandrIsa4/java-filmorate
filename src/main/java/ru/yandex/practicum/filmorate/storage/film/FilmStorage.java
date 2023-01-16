@@ -22,4 +22,6 @@ public interface FilmStorage {
     public void deleteLikeUser(Integer id, Integer userId);
 
     public List<Film> countPopularFilm(Integer count);
+
+    List<Film> getFilmsByDirector(int directorId, String sortType);
 }

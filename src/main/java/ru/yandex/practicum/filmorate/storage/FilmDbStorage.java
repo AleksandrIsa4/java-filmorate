@@ -3,9 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Rating;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.*;
@@ -16,9 +14,11 @@ public class FilmDbStorage implements FilmStorage {
     private int generator = 0;
 
     private final JdbcTemplate jdbcTemplate;
+    private final DirectorDbStorage directorDbStorage;
 
-    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, DirectorDbStorage directorDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.directorDbStorage = directorDbStorage;
         maxId();
     }
 
@@ -30,14 +30,30 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film postFilm(Film film) {
         additionFilm(film);
-        jdbcTemplate.update("INSERT INTO film VALUES (?,?,?,?,?,?,?)", film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), 0, film.getMpa().getId());
+        jdbcTemplate.update("INSERT INTO film VALUES (?,?,?,?,?,?,?)",
+                film.getId(),
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration(),
+                0,
+                film.getMpa().getId());
         if (film.getGenres() != null) {
             Set<Genre> genreSet = Set.copyOf(film.getGenres());
             for (Genre genre : genreSet) {
-                jdbcTemplate.update("INSERT INTO genre_film(film_id,genre_id) VALUES (?,?)", film.getId(), genre.getId());
+                jdbcTemplate.update("INSERT INTO genre_film(film_id,genre_id) VALUES (?,?)",
+                        film.getId(),
+                        genre.getId());
             }
         }
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT * FROM film AS f INNER JOIN mpa AS m ON m.id = f.rating_id WHERE film_id= ?", film.getId());
+        if (film.getDirectors() != null) {
+            for (Director director : film.getDirectors()) {
+                directorDbStorage.addToFilm(film.getId(), director.getId());
+            }
+        }
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT * FROM film AS f " +
+                "INNER JOIN mpa AS m ON m.id = f.rating_id " +
+                "WHERE film_id= ?", film.getId());
         filmRows.next();
         return getFilmBD(filmRows);
     }
@@ -112,6 +128,55 @@ public class FilmDbStorage implements FilmStorage {
             AllPopularFilm.add(getFilmId(filmRowsPopular.getInt("film_id")));
         }
         return AllPopularFilm;
+    }
+
+    @Override
+    public List<Film> getFilmsByDirector(int directorId, String sortType) {
+        String sqlQuery;
+        List<Film> filmsSQL = new ArrayList<>();
+        switch (sortType) {
+            case "year":
+                sqlQuery = "SELECT films_to_directors.film_id, " +
+                        "film.name, " +
+                        "film.description, " +
+                        "film.release_date, " +
+                        "film.duration, " +
+                        "film.rate, " +
+                        "film.rating_id, " +
+                        "mpa.rating " +
+                        "FROM films_to_directors " +
+                        "JOIN film ON films_to_directors.film_id = film.film_id " +
+                        "JOIN mpa ON film.rating_id = mpa.id " +
+                        "WHERE director_id = " + directorId +
+                        " ORDER BY release_date;";
+                SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sqlQuery);
+                while (filmRows.next()) {
+                    filmsSQL.add(getFilmBD(filmRows));
+                }
+                break;
+            case "likes":
+                sqlQuery = "SELECT films_to_directors.film_id, " +
+                        "film.name, " +
+                        "film.description, " +
+                        "film.release_date, " +
+                        "film.duration, " +
+                        "film.rate, " +
+                        "film.rating_id, " +
+                        "mpa.rating " +
+                        "FROM films_to_directors " +
+                        "JOIN film ON films_to_directors.film_id = film.film_id " +
+                        "JOIN mpa ON film.rating_id = mpa.id " +
+                        "WHERE director_id = " + directorId + " " +
+                        "ORDER BY rate DESC;";
+                SqlRowSet filmRows1 = jdbcTemplate.queryForRowSet(sqlQuery);
+                while (filmRows1.next()) {
+                    filmsSQL.add(getFilmBD(filmRows1));
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + sortType);
+        }
+        return filmsSQL;
     }
 
     private void additionFilm(Film film) {
