@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -128,5 +129,17 @@ public class UserController {
     public ResponseEntity<Integer> userDelete(@PathVariable("id") @NotNull Integer id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> userIdRecomment(@PathVariable("id") @NotNull Integer id) {
+        List<Film> films = userService.getUserRecomment(id);
+        if (films == null) {
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("Запись не найдена с id ", id);
+            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(films, HttpStatus.OK);
     }
 }
