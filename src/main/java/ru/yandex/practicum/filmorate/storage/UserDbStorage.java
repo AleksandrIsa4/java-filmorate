@@ -269,6 +269,4 @@ public class UserDbStorage implements UserStorage {
         userSql.setFriends(friends);
         return userSql;
     }
-
-
 }
