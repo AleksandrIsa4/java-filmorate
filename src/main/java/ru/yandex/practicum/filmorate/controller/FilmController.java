@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -59,6 +60,13 @@ public class FilmController {
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(currentFilm, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/search")
+    public Collection<Film> search(HttpServletRequest request) {
+        String query = request.getParameter("query").toLowerCase();
+        String[] by = request.getParameter("by").split(",");
+        return filmService.searchFilmByQuery(query, by);
     }
 
     @PutMapping(value = "/{id}/like/{userId}")

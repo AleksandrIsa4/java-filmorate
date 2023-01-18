@@ -63,6 +63,11 @@ public class FilmService {
         return addDirectors(films);
     }
 
+    public Collection<Film> searchFilmByQuery(String query, String[] by) {
+
+        return inMemoryFilmStorage.searchFilmByQuery(query, by);
+    }
+
     public Film getFilm(Integer id) {
         if (inMemoryFilmStorage.getFilmId(id) == null) {
             return null;

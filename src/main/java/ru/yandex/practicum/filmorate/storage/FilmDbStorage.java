@@ -88,6 +88,44 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public Collection<Film> searchFilmByQuery(String query, String[] by) {
+        boolean queryFind = false;
+        boolean byTitle = false;
+        boolean byDirector = false;
+        Collection<Film> allFilm = getMemoryFilms();
+        Collection<Film> result = new HashSet<>();
+        Map<Integer, List<Director>> directorsToFilms = directorDbStorage.findAllToFilm();
+        for (Film film : allFilm) {
+            String directorName = "";
+            if (directorsToFilms.containsKey(film.getId())) {
+                film.setDirectors(directorsToFilms.get(film.getId()));
+            }
+            for (Director director : directorDbStorage.findAllToFilm(film.getId())) {
+                directorName = director.getName().toLowerCase();
+            }
+            if (by != null) {
+                for (String target : by) {
+                    if (target.equalsIgnoreCase("title")) {
+                        byTitle = film.getName().toLowerCase().contains(query);
+                        if (directorName.isEmpty()) film.setDirectors(new ArrayList<>());
+                        if (byTitle) { result.add(film); }
+                    }
+                    if (target.equalsIgnoreCase("director")) {
+                        byDirector = directorName.contains(query);
+                        if (byDirector) { result.add(film); }
+                    }
+                }
+            } else {
+                String scope = film.getName().toLowerCase() + film.getDescription().toLowerCase() + directorName;
+                queryFind = scope.contains(query);
+                if (queryFind) { result.add(film); }
+            }
+        }
+        return result.stream().sorted(Comparator.comparingInt(Film::getRate).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Film getFilmId(Integer id) {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT * FROM film AS f INNER JOIN mpa AS m ON m.id = f.rating_id WHERE film_id= ?", id);
         filmRows.next();
