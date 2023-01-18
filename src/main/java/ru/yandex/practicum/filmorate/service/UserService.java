@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FeedDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
@@ -19,6 +21,7 @@ public class UserService {
     @Autowired
     @Qualifier("userDbStorage")
     private final UserStorage inMemoryUserStorage;
+    private final FeedDbStorage feedDbStorage;
 
     public void deleteUser(Integer id) {
         log.info("Получен DELETE User");
@@ -59,6 +62,8 @@ public class UserService {
 
         inMemoryUserStorage.addFriendId(id, friendId);
         log.info("Получен друг PUT User");
+        feedDbStorage.createFriendAddition(id, friendId);
+        log.info("Добавлен friend_add_event в таблицу feed");
         return null;
     }
 
@@ -70,6 +75,8 @@ public class UserService {
             return friendId;
         }
         inMemoryUserStorage.deleteFriendId(id, friendId);
+        feedDbStorage.createFriendDeletion(id, friendId);
+        log.info("Добавлен friend_delete_event в таблицу feed");
         return null;
     }
 
@@ -78,6 +85,13 @@ public class UserService {
             return null;
         }
         return inMemoryUserStorage.getUserIdFriend(id);
+    }
+
+    public List<Event> getFeed(Integer id) {
+        if (getUser(id) == null) {
+            return null;
+        }
+        return feedDbStorage.getFeed(id);
     }
 
     public List<User> getCommonFriend(Integer id, Integer otherId) {
