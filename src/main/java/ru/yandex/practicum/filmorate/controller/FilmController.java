@@ -63,11 +63,12 @@ public class FilmController {
     }
 
     @GetMapping(value = "/search")
-    public Collection<Film> search(HttpServletRequest request) {
-        String query = request.getParameter("query").toLowerCase();
-        String[] by = request.getParameter("by").split(",");
-        return filmService.searchFilmByQuery(query, by);
+    public Collection<Film> search(@RequestParam String query, @RequestParam String by) {
+        String queryLower = query.toLowerCase();
+        String[] byMassiv = by.split(",");
+        return filmService.searchFilmByQuery(queryLower, byMassiv);
     }
+
 
     @PutMapping(value = "/{id}/like/{userId}")
     public ResponseEntity<?> userLikeAdd(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
@@ -111,7 +112,7 @@ public class FilmController {
 
     @GetMapping(value = "/director/{directorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getFilmsByDirectorId(@PathVariable int directorId,
-                                           @RequestParam String sortBy) {
+                                                  @RequestParam String sortBy) {
         List<Film> films = filmService.getFilmsByDirector(directorId, sortBy);
         return new ResponseEntity<>(films, HttpStatus.OK);
     }
