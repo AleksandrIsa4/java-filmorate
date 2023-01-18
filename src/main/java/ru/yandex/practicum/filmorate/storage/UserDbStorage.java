@@ -1,12 +1,9 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -18,14 +15,12 @@ public class UserDbStorage implements UserStorage {
 
     private int generator = 0;
     private final JdbcTemplate jdbcTemplate;
-    //@Autowired
-    // @Qualifier("filmDbStorage")
     private final FilmStorage filmDbStorage;
 
     public UserDbStorage(JdbcTemplate jdbcTemplate, FilmStorage filmDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
-        maxId();
         this.filmDbStorage = filmDbStorage;
+        maxId();
     }
 
     @Override
