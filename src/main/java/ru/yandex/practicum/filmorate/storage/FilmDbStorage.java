@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class FilmDbStorage implements FilmStorage {
