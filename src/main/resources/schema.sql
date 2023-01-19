@@ -7,7 +7,10 @@ DROP TABLE IF EXISTS
     films_to_directors,
     "friends",
     "genre_film",
-    "like_users"
+    "like_users",
+    "reviews",
+    "like_review",
+    "dislike_review"
     CASCADE;
 
 CREATE TABLE IF NOT EXISTS PUBLIC."genre" (
