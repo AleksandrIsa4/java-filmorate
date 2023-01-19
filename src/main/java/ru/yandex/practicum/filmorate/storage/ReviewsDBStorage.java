@@ -30,13 +30,17 @@ public class ReviewsDBStorage {
     }
 
     public Review postReview(Review review) {
-        additionReview(review);
-        jdbcTemplate.update("INSERT INTO reviews VALUES (?,?,?,?,?,?)", review.getReviewId(), review.getContent(),
-                review.getIsPositive(), review.getUserId(), review.getFilmId(), 0);
+        if(review.getFilmId() < 0 || review.getUserId() < 0) {
+            return null;
+        } else {
+            additionReview(review);
+            jdbcTemplate.update("INSERT INTO reviews VALUES (?,?,?,?,?,?)", review.getReviewId(), review.getContent(),
+                    review.getIsPositive(), review.getUserId(), review.getFilmId(), 0);
 
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT * FROM reviews WHERE id= ?", review.getReviewId());
-        filmRows.next();
-        return getReviewBD(filmRows);
+            SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT * FROM reviews WHERE id= ?", review.getReviewId());
+            filmRows.next();
+            return getReviewBD(filmRows);
+        }
     }
 
     public Review putReview(Review review) {

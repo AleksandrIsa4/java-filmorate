@@ -29,11 +29,22 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Review postReview(@RequestBody @Valid @NotNull Review review) {
-        if (review.getUserId() < 0 && review.getFilmId() < 0) {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+     public ResponseEntity<?> postReview(@RequestBody @Valid @NotNull Review review) {
+        if(review.getUserId() == 0 || review.getFilmId()== 0){
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("Запись не найдена с id ", review.getReviewId());
+            body.put("Код ошибки", HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
-        return reviewService.postReview(review);
+        Review currentReview = reviewService.postReview(review);
+        if (currentReview == null) {
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("Запись не найдена с id ", review.getReviewId());
+            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(currentReview, HttpStatus.OK);
+
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
