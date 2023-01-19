@@ -1,21 +1,24 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Event {
-    private long timestamp;
-    private int userId;
+    long timestamp;
+    int userId;
     @NotNull
-    private String eventType;
+    String eventType;
     @NotNull
-    private String operation;
-    private int eventId;
-    private int entityId;
+    String operation;
+    int eventId;
+    int entityId;
 }

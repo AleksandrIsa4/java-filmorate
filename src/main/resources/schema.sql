@@ -8,6 +8,9 @@ DROP TABLE IF EXISTS
     "friends",
     "genre_film",
     "like_users",
+    "reviews",
+    "like_review",
+    "dislike_review",
     "event",
     "operation",
     "feed"
@@ -165,10 +168,11 @@ CREATE TABLE IF NOT EXISTS PUBLIC."feed" (
     "user_id" INTEGER NOT NULL REFERENCES PUBLIC."user_kino" ("user_id") ON DELETE CASCADE,
     "event_type" INTEGER NOT NULL REFERENCES PUBLIC."event" (id),
     "operation_id" INTEGER NOT NULL REFERENCES PUBLIC."operation" (id),
-    "film_id" INTEGER NULL REFERENCES PUBLIC."film" ("film_id") ON DELETE CASCADE,
+    "film_id" INTEGER NULL,
     "review_id" INTEGER NULL,
-    "friend_id" INTEGER NULL REFERENCES PUBLIC."user_kino" ("user_id") ON DELETE CASCADE,
+    "friend_id" INTEGER NULL,
     CONSTRAINT "ck_feed_filmReviewFriend" CHECK (
                 CASE WHEN "film_id" IS NULL THEN 0 ELSE 1 END +
+                CASE WHEN "review_id" IS NULL THEN 0 ELSE 1 END +
                 CASE WHEN "friend_id" IS NULL THEN 0 ELSE 1 END = 1)
 );

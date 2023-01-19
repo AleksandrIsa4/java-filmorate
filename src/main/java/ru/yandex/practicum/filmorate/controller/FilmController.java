@@ -1,17 +1,15 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -27,6 +25,7 @@ import java.util.*;
 public class FilmController {
 
     private final FilmService filmService;
+    private final FeedService feedService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Film filmAdd(@RequestBody @Valid @NotNull Film film) {
@@ -84,6 +83,7 @@ public class FilmController {
             body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         } else {
+            feedService.createLikeAddition(userId, id);
             return new ResponseEntity<>(filmService.getFilm(id), HttpStatus.OK);
         }
     }
@@ -98,6 +98,7 @@ public class FilmController {
             body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         } else {
+            feedService.createLikeDeletion(userId, id);
             return new ResponseEntity<>(filmService.getFilm(id), HttpStatus.OK);
         }
     }

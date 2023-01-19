@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FeedDbStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ public class FilmService {
     private final FilmStorage inMemoryFilmStorage;
     private final UserService userService;
     private final DirectorService directorService;
-    private final FeedDbStorage feedDbStorage;
 
     public void deleteFilm(Integer id) {
         log.info("Получен DELETE Film");
@@ -94,8 +92,6 @@ public class FilmService {
         }
         inMemoryFilmStorage.addLikeUser(id, userId);
         log.info("Получен лайк PUT Film");
-        feedDbStorage.createLikeAddition(userId, id);
-        log.info("Добавлен like_add_event в таблицу feed");
         return null;
     }
 
@@ -107,8 +103,6 @@ public class FilmService {
             return userId;
         }
         inMemoryFilmStorage.deleteLikeUser(id, userId);
-        feedDbStorage.createLikeDeletion(userId, id);
-        log.info("Добавлен like_delete_event в таблицу feed");
         return null;
     }
 
