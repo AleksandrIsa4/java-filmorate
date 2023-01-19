@@ -160,8 +160,22 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> countPopularFilm(Integer count) {
-        SqlRowSet filmRowsPopular = jdbcTemplate.queryForRowSet("SELECT film_id, rate FROM film GROUP BY film_id, rate ORDER BY rate DESC LIMIT ?", count);
+    public List<Film> countPopularFilm(Integer count, Integer genreId, Integer year) {
+        String sql;
+        String sqlWithoutFilter = "SELECT f.film_id, f.rate FROM film f " +
+                "LEFT JOIN genre_film gf ON f.film_id = gf.film_id %s " +
+                "GROUP BY f.film_id, f.rate ORDER BY f.rate DESC LIMIT ?";
+        String sqlFilter = "WHERE gf.genre_id = %d  AND EXTRACT(YEAR FROM f.release_date) = %d";
+        if(genreId != null && year != null) {
+            sql = String.format(sqlWithoutFilter, String.format(sqlFilter, genreId, year));
+        } else if (genreId != null) {
+            sqlFilter = "WHERE gf.genre_id = %d";
+            sql = String.format(sqlWithoutFilter, String.format(sqlFilter, genreId));
+        } else if (year != null) {
+            sqlFilter = "WHERE EXTRACT(YEAR FROM f.release_date) = %d";
+            sql = String.format(sqlWithoutFilter, String.format(sqlFilter, year));
+        } else sql = "SELECT film_id, rate FROM film GROUP BY film_id, rate ORDER BY rate DESC LIMIT ?";
+        SqlRowSet filmRowsPopular = jdbcTemplate.queryForRowSet(sql, count);
         List<Film> AllPopularFilm = new ArrayList<>();
         while (filmRowsPopular.next()) {
             AllPopularFilm.add(getFilmId(filmRowsPopular.getInt("film_id")));

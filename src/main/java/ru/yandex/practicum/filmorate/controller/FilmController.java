@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -98,8 +95,10 @@ public class FilmController {
     }
 
     @GetMapping(value = "/popular", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> filmPopular(@RequestParam(required = false) Integer count) {
-        List<Film> popularFilms = filmService.popularFilm(count);
+    public ResponseEntity<?> filmPopular(@RequestParam(defaultValue = "10") Integer count,
+                                         @RequestParam(required = false) Integer genreId,
+                                         @RequestParam(required = false) Integer year) {
+        List<Film> popularFilms = filmService.popularFilm(count, genreId, year);
         return new ResponseEntity<>(popularFilms, HttpStatus.OK);
     }
 

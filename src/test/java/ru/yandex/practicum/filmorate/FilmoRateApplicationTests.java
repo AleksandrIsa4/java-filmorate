@@ -9,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
@@ -119,7 +118,7 @@ class FilmoRateApplicationTests {
 
     @Test
     public void testCountPopularFilm() {
-        List<Film> films = filmDbStorage.countPopularFilm(2);
+        List<Film> films = filmDbStorage.countPopularFilm(2, null, null);
         Assertions.assertEquals(films.get(0).getName(), "nisi eiusmod3");
         Assertions.assertEquals(films.get(1).getName(), "nisi eiusmod2");
     }
