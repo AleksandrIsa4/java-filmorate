@@ -21,7 +21,7 @@ public class FeedDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public List<Event> getFeed(Integer userId) {
-        boolean isExist = jdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM feed WHERE user_id = ?)",
+        boolean isExist = jdbcTemplate.queryForObject("SELECT EXISTS(SELECT * FROM user_kino WHERE user_id = ?)",
                 ((rs, rowNum) -> rs.getBoolean(1)), userId);
         if(!isExist) return null;
         String sql = "SELECT f.timestamp, f.user_id, e.name event_type, o.name operation, " +
