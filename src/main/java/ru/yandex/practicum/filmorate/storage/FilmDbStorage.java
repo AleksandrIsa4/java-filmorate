@@ -127,6 +127,20 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public Collection<Film> searchCommonFilm(String userId, String friendId) {
+        Collection<Film> filmsSQL = new ArrayList<>();
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT * FROM film AS f "
+                + "INNER JOIN mpa AS m ON m.id = f.rating_id "
+                + "INNER JOIN like_users AS lu ON lu.film_id = f.film_id "
+                + "WHERE lu.user_id = ? AND ? "
+                + "ORDER BY rate DESC", userId, friendId);
+        while (filmRows.next()) {
+            filmsSQL.add(getFilmBD(filmRows));
+        }
+        return filmsSQL;
+    }
+
+    @Override
     public Film getFilmId(Integer id) {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT * FROM film AS f INNER JOIN mpa AS m ON m.id = f.rating_id WHERE film_id= ?", id);
         filmRows.next();

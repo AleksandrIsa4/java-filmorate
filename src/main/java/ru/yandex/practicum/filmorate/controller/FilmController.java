@@ -68,6 +68,11 @@ public class FilmController {
         String[] byMassiv = by.split(",");
         return filmService.searchFilmByQuery(queryLower, byMassiv);
     }
+
+    @GetMapping(value = "/common")
+    public Collection<Film> searchCommon(@RequestParam String userId, @RequestParam String friendId) {
+        return filmService.searchCommonFilm(userId, friendId);
+    }
     
     @PutMapping(value = "/{id}/like/{userId}")
     public ResponseEntity<?> userLikeAdd(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
