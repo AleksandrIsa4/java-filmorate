@@ -79,6 +79,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public Collection<Film> searchFilmByQuery(String query, String[] by) { throw new UnsupportedOperationException(); }
+
     private void additionFilm(Film film) {
         if (film.getId() == 0) {
             film.setId(++generator);
