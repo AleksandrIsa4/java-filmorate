@@ -107,7 +107,7 @@ public class FilmService {
     }
 
     public List<Film> popularFilm(Integer count, Integer genreId, Integer year) {
-        return inMemoryFilmStorage.countPopularFilm(count, genreId, year);
+        return addDirectors(inMemoryFilmStorage.countPopularFilm(count, genreId, year));
     }
 
     public List<Film> getFilmsByDirector(int directorId, String sortType) {
