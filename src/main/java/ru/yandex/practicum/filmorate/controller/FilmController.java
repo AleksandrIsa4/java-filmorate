@@ -68,8 +68,7 @@ public class FilmController {
         String[] byMassiv = by.split(",");
         return filmService.searchFilmByQuery(queryLower, byMassiv);
     }
-
-
+    
     @PutMapping(value = "/{id}/like/{userId}")
     public ResponseEntity<?> userLikeAdd(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
         // Если idBody не Null, значит один из Id не найден
