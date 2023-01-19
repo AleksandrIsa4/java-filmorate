@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class FilmDbStorage implements FilmStorage {
@@ -81,6 +82,58 @@ public class FilmDbStorage implements FilmStorage {
     public Collection<Film> getMemoryFilms() {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT * FROM film AS f INNER JOIN mpa AS m ON m.id = f.rating_id");
         Collection<Film> filmsSQL = new ArrayList<>();
+        while (filmRows.next()) {
+            filmsSQL.add(getFilmBD(filmRows));
+        }
+        return filmsSQL;
+    }
+
+    @Override
+    public Collection<Film> searchFilmByQuery(String query, String[] by) {
+        boolean queryFind = false;
+        boolean byTitle = false;
+        boolean byDirector = false;
+        Collection<Film> allFilm = getMemoryFilms();
+        Collection<Film> result = new HashSet<>();
+        Map<Integer, List<Director>> directorsToFilms = directorDbStorage.findAllToFilm();
+        for (Film film : allFilm) {
+            String directorName = "";
+            if (directorsToFilms.containsKey(film.getId())) {
+                film.setDirectors(directorsToFilms.get(film.getId()));
+            }
+            for (Director director : directorDbStorage.findAllToFilm(film.getId())) {
+                directorName = director.getName().toLowerCase();
+            }
+            if (by != null) {
+                for (String target : by) {
+                    if (target.equalsIgnoreCase("title")) {
+                        byTitle = film.getName().toLowerCase().contains(query);
+                        if (directorName.isEmpty()) film.setDirectors(new ArrayList<>());
+                        if (byTitle) { result.add(film); }
+                    }
+                    if (target.equalsIgnoreCase("director")) {
+                        byDirector = directorName.contains(query);
+                        if (byDirector) { result.add(film); }
+                    }
+                }
+            } else {
+                String scope = film.getName().toLowerCase() + film.getDescription().toLowerCase() + directorName;
+                queryFind = scope.contains(query);
+                if (queryFind) { result.add(film); }
+            }
+        }
+        return result.stream().sorted(Comparator.comparingInt(Film::getRate).reversed())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Film> searchCommonFilm(String userId, String friendId) {
+        Collection<Film> filmsSQL = new ArrayList<>();
+        SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT * FROM film AS f "
+                + "INNER JOIN mpa AS m ON m.id = f.rating_id "
+                + "INNER JOIN like_users AS lu ON lu.film_id = f.film_id "
+                + "WHERE lu.user_id = ? AND ? "
+                + "ORDER BY rate DESC", userId, friendId);
         while (filmRows.next()) {
             filmsSQL.add(getFilmBD(filmRows));
         }
