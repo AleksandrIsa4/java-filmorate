@@ -118,7 +118,7 @@ class FilmoRateApplicationTests {
 
     @Test
     public void testCountPopularFilm() {
-        List<Film> films = filmDbStorage.countPopularFilm(2);
+        List<Film> films = filmDbStorage.countPopularFilm(2, null, null);
         Assertions.assertEquals(films.get(0).getName(), "nisi eiusmod3");
         Assertions.assertEquals(films.get(1).getName(), "nisi eiusmod2");
     }

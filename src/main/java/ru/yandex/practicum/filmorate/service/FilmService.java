@@ -106,12 +106,8 @@ public class FilmService {
         return null;
     }
 
-    public List<Film> popularFilm(Integer count) {
-        if (count == null) {
-            return inMemoryFilmStorage.countPopularFilm(10);
-        } else {
-            return inMemoryFilmStorage.countPopularFilm(count);
-        }
+    public List<Film> popularFilm(Integer count, Integer genreId, Integer year) {
+        return addDirectors(inMemoryFilmStorage.countPopularFilm(count, genreId, year));
     }
 
     public List<Film> getFilmsByDirector(int directorId, String sortType) {

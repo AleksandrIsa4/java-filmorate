@@ -104,8 +104,10 @@ public class FilmController {
     }
 
     @GetMapping(value = "/popular", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> filmPopular(@RequestParam(required = false) Integer count) {
-        List<Film> popularFilms = filmService.popularFilm(count);
+    public ResponseEntity<?> filmPopular(@RequestParam(defaultValue = "10") Integer count,
+                                         @RequestParam(required = false) Integer genreId,
+                                         @RequestParam(required = false) Integer year) {
+        List<Film> popularFilms = filmService.popularFilm(count, genreId, year);
         return new ResponseEntity<>(popularFilms, HttpStatus.OK);
     }
 
