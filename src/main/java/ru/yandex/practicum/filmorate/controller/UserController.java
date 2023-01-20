@@ -6,8 +6,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
@@ -25,6 +27,7 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
+    private final FeedService feedService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public User userAdd(@RequestBody @Valid User user) {
@@ -76,6 +79,7 @@ public class UserController {
             body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         } else {
+            feedService.createFriendAddition(id, friendId);
             return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
         }
     }
@@ -96,6 +100,7 @@ public class UserController {
             body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         } else {
+            feedService.createFriendDeletion(id, friendId);
             return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
         }
     }
@@ -129,6 +134,18 @@ public class UserController {
     public ResponseEntity<Integer> userDelete(@PathVariable("id") @NotNull Integer id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}/feed")
+    public ResponseEntity<?> findFeed(@PathVariable @NotNull Integer id) {
+        List<Event> feed = feedService.getFeed(id);
+        if (feed == null) {
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("Запись не найдена с id ", id);
+            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(feed,HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)

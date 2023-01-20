@@ -6,8 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import javax.validation.Valid;
@@ -27,6 +27,7 @@ import java.util.Map;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final FeedService feedService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
      public ResponseEntity<?> postReview(@RequestBody @Valid @NotNull Review review) {
@@ -43,6 +44,7 @@ public class ReviewController {
             body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
+        feedService.createReviewAddition(currentReview.getUserId(), currentReview.getReviewId());
         return new ResponseEntity<>(currentReview, HttpStatus.OK);
 
     }
@@ -56,6 +58,7 @@ public class ReviewController {
             body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
+        feedService.createReviewUpdate(currentReview.getUserId(), currentReview.getReviewId());
         return new ResponseEntity<>(currentReview, HttpStatus.OK);
     }
 
@@ -75,7 +78,9 @@ public class ReviewController {
 
     @DeleteMapping(value = "/{reviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteReview(@PathVariable("reviewId") @NotNull Integer reviewId) {
+        Review currentReview = reviewService.getReviewById(reviewId);
         reviewService.deleteReview(reviewId);
+        feedService.createReviewDeletion(currentReview.getUserId(), currentReview.getReviewId());
     }
 
     @GetMapping
