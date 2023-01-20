@@ -64,7 +64,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> countPopularFilm(Integer count) {
+    public List<Film> countPopularFilm(Integer count, Integer genreId, Integer year) {
         List<Film> AllPopularFilm = films.values().stream().collect(
                 Collectors.toCollection(ArrayList::new));
         AllPopularFilm.sort((Film o1, Film o2) -> o2.getRate() - o1.getRate());
