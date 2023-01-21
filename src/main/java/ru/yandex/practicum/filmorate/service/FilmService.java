@@ -64,12 +64,10 @@ public class FilmService {
     }
 
     public Collection<Film> searchFilmByQuery(String query, String[] by) {
-
         return inMemoryFilmStorage.searchFilmByQuery(query, by);
     }
 
     public Collection<Film> searchCommonFilm(String userId, String friendId) {
-
         return inMemoryFilmStorage.searchCommonFilm(userId, friendId);
     }
 
@@ -79,7 +77,6 @@ public class FilmService {
         }
         Film film = inMemoryFilmStorage.getFilmId(id);
         film.setDirectors(directorService.findAllToFilm(film.getId()));
-
         return film;
     }
 
@@ -114,7 +111,6 @@ public class FilmService {
         directorService.get(directorId);
         List<Film> films = inMemoryFilmStorage.getFilmsByDirector(directorId, sortType);
         log.info("get films by director (sorted by " + sortType + ") --OK");
-
         return addDirectors(films);
     }
 

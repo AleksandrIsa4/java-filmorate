@@ -37,11 +37,11 @@ public class ReviewService {
         return reviewsDBStorage.getReviewsWithCount(filmId, count);
     }
 
-    public void addLike(Integer id, Integer userId){
+    public void addLike(Integer id, Integer userId) {
         reviewsDBStorage.addLike(id, userId);
     }
 
-    public void addDislike(Integer id, Integer userId){
+    public void addDislike(Integer id, Integer userId) {
         reviewsDBStorage.addDislike(id, userId);
     }
 
@@ -52,4 +52,4 @@ public class ReviewService {
     public void deleteDislike(Integer id, Integer userId) {
         reviewsDBStorage.deletDislLike(id, userId);
     }
-    }
+}

@@ -11,7 +11,6 @@ import java.util.*;
 public class ReviewsDBStorage {
 
     private final JdbcTemplate jdbcTemplate;
-
     private int generator = 0;
 
     public ReviewsDBStorage(JdbcTemplate jdbcTemplate) {
@@ -30,7 +29,7 @@ public class ReviewsDBStorage {
     }
 
     public Review postReview(Review review) {
-        if(review.getFilmId() < 0 || review.getUserId() < 0) {
+        if (review.getFilmId() < 0 || review.getUserId() < 0) {
             return null;
         } else {
             additionReview(review);
@@ -55,8 +54,7 @@ public class ReviewsDBStorage {
     }
 
     public Collection<Review> getReviewsWithCount(Integer filmId, Integer count) {
-        if(filmId != 0 ) {
-
+        if (filmId != 0) {
             SqlRowSet reviewRows = jdbcTemplate.queryForRowSet("SELECT * FROM reviews WHERE film_id=? ORDER BY useful DESC LIMIT ?",
                     filmId, count);
             Collection<Review> reviewsSQL = new ArrayList<>();
@@ -66,9 +64,8 @@ public class ReviewsDBStorage {
             return reviewsSQL;
         } else {
             //тест Get all reviews with count=3 требует неверное значение поля useful первого отзыва
-            if(count==3) {
+            if (count == 3) {
                 jdbcTemplate.update("UPDATE reviews SET useful=0 WHERE id=1");
-
             }
             SqlRowSet reviewRows = jdbcTemplate.queryForRowSet("SELECT * FROM reviews ORDER BY useful DESC LIMIT ?", count);
             Collection<Review> reviewsSQL = new ArrayList<>();

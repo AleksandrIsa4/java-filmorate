@@ -29,7 +29,6 @@ public class DirectorDbStorage implements DirectorStorage {
     @Override
     public Optional<Director> find(int id) {
         String sqlQuery = "SELECT * FROM directors WHERE director_id = " + id + ";";
-
         return jdbcTemplate.query(sqlQuery, (resultSet, rowNum) -> makeDirector(resultSet))
                 .stream()
                 .findAny();
@@ -45,7 +44,6 @@ public class DirectorDbStorage implements DirectorStorage {
             return statement;
         }, keyHolder);
         director.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
-
         return director;
     }
 
@@ -55,7 +53,6 @@ public class DirectorDbStorage implements DirectorStorage {
         jdbcTemplate.update(sqlQuery,
                 director.getName(),
                 director.getId());
-
         return director;
     }
 
@@ -63,7 +60,6 @@ public class DirectorDbStorage implements DirectorStorage {
     public Director delete(int id) {
         String sqlQuery = "DELETE FROM directors WHERE director_id = ? ;";
         jdbcTemplate.update(sqlQuery, id);
-
         return null;
     }
 
@@ -85,7 +81,6 @@ public class DirectorDbStorage implements DirectorStorage {
                 "directors.name FROM films_to_directors " +
                 "JOIN directors ON films_to_directors.director_id = directors.director_id " +
                 "WHERE film_id = " + filmId + ";";
-
         return jdbcTemplate.query(sqlQuery, (resultSet, rowNum) -> makeDirector(resultSet));
     }
 
@@ -96,35 +91,31 @@ public class DirectorDbStorage implements DirectorStorage {
                 "directors.name " +
                 "FROM films_to_directors " +
                 "JOIN directors ON films_to_directors.director_id = directors.director_id;";
-
         return jdbcTemplate.query(sqlQuery, this::makeDirectorsToFilm);
     }
 
     @Override
     public boolean isAlreadyExist(int id) {
         String sqlQuery = "SELECT director_id FROM directors;";
-
         return jdbcTemplate.queryForList(sqlQuery, Integer.class)
                 .contains(id);
     }
 
     private Map<Integer, List<Director>> makeDirectorsToFilm(ResultSet resultSet) throws SQLException {
         Map<Integer, List<Director>> directorToFilm = new LinkedHashMap<>();
-        while(resultSet.next()) {
+        while (resultSet.next()) {
             Integer filmId = resultSet.getInt("film_id");
             directorToFilm.putIfAbsent(filmId, new ArrayList<>());
             int directorId = resultSet.getInt("director_id");
             String name = resultSet.getString("name");
             directorToFilm.get(filmId).add(new Director(directorId, name));
         }
-
         return directorToFilm;
     }
 
     private Director makeDirector(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("director_id");
         String name = resultSet.getString("name");
-
         return new Director(id, name);
     }
 }

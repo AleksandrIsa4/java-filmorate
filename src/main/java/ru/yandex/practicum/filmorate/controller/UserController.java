@@ -145,7 +145,7 @@ public class UserController {
             body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(feed,HttpStatus.OK);
+        return new ResponseEntity<>(feed, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)

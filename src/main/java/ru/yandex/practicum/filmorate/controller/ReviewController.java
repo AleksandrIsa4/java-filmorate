@@ -30,8 +30,8 @@ public class ReviewController {
     private final FeedService feedService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-     public ResponseEntity<?> postReview(@RequestBody @Valid @NotNull Review review) {
-        if(review.getUserId() == 0 || review.getFilmId()== 0){
+    public ResponseEntity<?> postReview(@RequestBody @Valid @NotNull Review review) {
+        if (review.getUserId() == 0 || review.getFilmId() == 0) {
             Map<String, Object> body = new LinkedHashMap<>();
             body.put("Запись не найдена с id ", review.getReviewId());
             body.put("Код ошибки", HttpStatus.BAD_REQUEST.value());
@@ -46,7 +46,6 @@ public class ReviewController {
         }
         feedService.createReviewAddition(currentReview.getUserId(), currentReview.getReviewId());
         return new ResponseEntity<>(currentReview, HttpStatus.OK);
-
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -72,7 +71,6 @@ public class ReviewController {
             return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(currentReview, HttpStatus.OK);
-
     }
 
 
@@ -117,5 +115,4 @@ public class ReviewController {
 
         reviewService.deleteDislike(id, userId);
     }
-
 }

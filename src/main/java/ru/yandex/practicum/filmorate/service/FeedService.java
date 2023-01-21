@@ -16,7 +16,6 @@ public class FeedService {
     private final static int ADD_ID = 1;
     private final static int UPDATE_ID = 2;
     private final static int DELETE_ID = 3;
-
     private final FeedDbStorage storage;
 
     public List<Event> getFeed(Integer id) {

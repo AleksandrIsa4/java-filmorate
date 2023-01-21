@@ -24,59 +24,50 @@ public class DirectorService {
 
     public List<Director> get() {
         log.info("get all director --OK");
-
         return directorStorage.findAll();
     }
 
     public Director get(int id) {
         log.info("get director by id --OK");
-
         return directorStorage.find(id)
                 .orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND, "director id not found"));
     }
 
     public Director add(Director director) {
         log.info("director add --OK");
-
         return directorStorage.add(director);
     }
 
     public Director update(Director director) {
         throwIfDirectorNotValid(director.getId());
         log.info("director update --OK");
-
         return directorStorage.update(director);
     }
 
     public Director delete(int id) {
         throwIfDirectorNotValid(id);
         log.info("director delete --OK");
-
         return directorStorage.delete(id);
     }
 
     public void addToFilm(int filmId, int directorId) {
         throwIfDirectorNotValid(directorId);
         log.info("add director to film --OK");
-
         directorStorage.addToFilm(filmId, directorId);
     }
 
     public void deleteAllByFilmId(int filmId) {
         log.info("delete director from film --OK");
-
         directorStorage.deleteAllByFilmId(filmId);
     }
 
     public List<Director> findAllToFilm(int filmId) {
         log.info("find directors for film --OK");
-
         return directorStorage.findAllToFilm(filmId);
     }
 
-    public Map<Integer, List<Director>> findAllToFilm(){
+    public Map<Integer, List<Director>> findAllToFilm() {
         log.info("find all directors for films --OK");
-
         return directorStorage.findAllToFilm();
     }
 

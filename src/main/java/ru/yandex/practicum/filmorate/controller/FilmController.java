@@ -72,7 +72,7 @@ public class FilmController {
     public Collection<Film> searchCommon(@RequestParam String userId, @RequestParam String friendId) {
         return filmService.searchCommonFilm(userId, friendId);
     }
-    
+
     @PutMapping(value = "/{id}/like/{userId}")
     public ResponseEntity<?> userLikeAdd(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
         // Если idBody не Null, значит один из Id не найден

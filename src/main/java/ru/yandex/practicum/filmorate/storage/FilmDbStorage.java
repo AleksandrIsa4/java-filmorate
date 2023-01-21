@@ -109,17 +109,23 @@ public class FilmDbStorage implements FilmStorage {
                     if (target.equalsIgnoreCase("title")) {
                         byTitle = film.getName().toLowerCase().contains(query);
                         if (directorName.isEmpty()) film.setDirectors(new ArrayList<>());
-                        if (byTitle) { result.add(film); }
+                        if (byTitle) {
+                            result.add(film);
+                        }
                     }
                     if (target.equalsIgnoreCase("director")) {
                         byDirector = directorName.contains(query);
-                        if (byDirector) { result.add(film); }
+                        if (byDirector) {
+                            result.add(film);
+                        }
                     }
                 }
             } else {
                 String scope = film.getName().toLowerCase() + film.getDescription().toLowerCase() + directorName;
                 queryFind = scope.contains(query);
-                if (queryFind) { result.add(film); }
+                if (queryFind) {
+                    result.add(film);
+                }
             }
         }
         return result.stream().sorted(Comparator.comparingInt(Film::getRate).reversed())
@@ -180,7 +186,7 @@ public class FilmDbStorage implements FilmStorage {
                 "LEFT JOIN genre_film gf ON f.film_id = gf.film_id %s " +
                 "GROUP BY f.film_id, f.rate ORDER BY f.rate DESC LIMIT ?";
         String sqlFilter = "WHERE gf.genre_id = %d  AND EXTRACT(YEAR FROM f.release_date) = %d";
-        if(genreId != null && year != null) {
+        if (genreId != null && year != null) {
             sql = String.format(sqlWithoutFilter, String.format(sqlFilter, genreId, year));
         } else if (genreId != null) {
             sqlFilter = "WHERE gf.genre_id = %d";

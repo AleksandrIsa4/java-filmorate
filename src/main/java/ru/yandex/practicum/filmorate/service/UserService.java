@@ -57,7 +57,6 @@ public class UserService {
         if (getUser(friendId) == null) {
             return friendId;
         }
-
         inMemoryUserStorage.addFriendId(id, friendId);
         log.info("Получен друг PUT User");
         return null;

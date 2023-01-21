@@ -27,5 +27,4 @@ public interface DirectorStorage {
     Map<Integer, List<Director>> findAllToFilm();
 
     boolean isAlreadyExist(int id);
-
 }

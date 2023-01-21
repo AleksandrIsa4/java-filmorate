@@ -38,7 +38,6 @@ public class DirectorController {
         if (director == null) {
             throw new BadRequestException("Bad request. Director couldn't be null.");
         }
-
         return directorService.add(director);
     }
 
@@ -48,7 +47,6 @@ public class DirectorController {
         if (director == null) {
             throw new BadRequestException("Bad request. Director couldn't be null.");
         }
-
         return directorService.update(director);
     }
 
