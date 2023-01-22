@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -35,13 +37,12 @@ public class FilmService {
         log.info("Получен POST Film");
         Film film1 = inMemoryFilmStorage.postFilm(film);
         film1.setDirectors(directorService.findAllToFilm(film1.getId()));
-
         return film1;
     }
 
     public Film changeFilm(Film film) {
         if (inMemoryFilmStorage.putFilm(film) == null) {
-            return null;
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "film id not found");
         }
         log.info("Получен PUT Film");
         if (film.getDirectors() != null) {
@@ -53,13 +54,11 @@ public class FilmService {
         }
         Film film1 = inMemoryFilmStorage.putFilm(film);
         film1.setDirectors(directorService.findAllToFilm(film1.getId()));
-
         return film1;
     }
 
     public Collection<Film> getFilms() {
         Collection<Film> films = inMemoryFilmStorage.getMemoryFilms();
-
         return addDirectors(films);
     }
 
@@ -72,20 +71,20 @@ public class FilmService {
     }
 
     public Film getFilm(Integer id) {
-        if (inMemoryFilmStorage.getFilmId(id) == null) {
-            return null;
-        }
         Film film = inMemoryFilmStorage.getFilmId(id);
+        if (film == null) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "film id not found");
+        }
         film.setDirectors(directorService.findAllToFilm(film.getId()));
         return film;
     }
 
     public Integer changeLike(Integer id, Integer userId) {
         if (getFilm(id) == null) {
-            return id;
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "film id not found");
         }
         if (userService.getUser(userId) == null) {
-            return userId;
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "user id not found");
         }
         inMemoryFilmStorage.addLikeUser(id, userId);
         log.info("Получен лайк PUT Film");
@@ -94,10 +93,10 @@ public class FilmService {
 
     public Integer deleteLike(Integer id, Integer userId) {
         if (getFilm(id) == null) {
-            return id;
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "film id not found");
         }
         if (userService.getUser(userId) == null) {
-            return userId;
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "user id not found");
         }
         inMemoryFilmStorage.deleteLikeUser(id, userId);
         return null;

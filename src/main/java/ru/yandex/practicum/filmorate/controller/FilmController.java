@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.BadRequestException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -29,19 +30,18 @@ public class FilmController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Film filmAdd(@RequestBody @Valid @NotNull Film film) {
+        if (film == null) {
+            throw new BadRequestException("Bad request. Film couldn't be null.");
+        }
         return filmService.saveFilm(film);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> filmUpdate(@RequestBody @Valid @NotNull Film film) {
-        Film currentFilm = filmService.changeFilm(film);
-        if (currentFilm == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", film.getId());
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    public Film filmUpdate(@RequestBody @Valid @NotNull Film film) {
+        if (film == null) {
+            throw new BadRequestException("Bad request. Film couldn't be null.");
         }
-        return new ResponseEntity<>(currentFilm, HttpStatus.OK);
+        return filmService.changeFilm(film);
     }
 
     @GetMapping
@@ -50,15 +50,8 @@ public class FilmController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> filmId(@PathVariable("id") @NotNull Integer id) {
-        Film currentFilm = filmService.getFilm(id);
-        if (currentFilm == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", id);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(currentFilm, HttpStatus.OK);
+    public Film filmId(@PathVariable("id") @NotNull Integer id) {
+        return filmService.getFilm(id);
     }
 
     @GetMapping(value = "/search")
@@ -74,41 +67,24 @@ public class FilmController {
     }
 
     @PutMapping(value = "/{id}/like/{userId}")
-    public ResponseEntity<?> userLikeAdd(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
-        // Если idBody не Null, значит один из Id не найден
-        Integer idBody = filmService.changeLike(id, userId);
-        if (idBody != null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", idBody);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        } else {
-            feedService.createLikeAddition(userId, id);
-            return new ResponseEntity<>(filmService.getFilm(id), HttpStatus.OK);
-        }
+    public Film userLikeAdd(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
+        filmService.changeLike(id, userId);
+        feedService.createLikeAddition(userId, id);
+        return filmService.getFilm(id);
     }
 
     @DeleteMapping(value = "/{id}/like/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> userLikeDelete(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
-        // Если idBody не Null, значит один из пользователей с Id не найден
-        Integer idBody = filmService.deleteLike(id, userId);
-        if (idBody != null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", idBody);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        } else {
-            feedService.createLikeDeletion(userId, id);
-            return new ResponseEntity<>(filmService.getFilm(id), HttpStatus.OK);
-        }
+    public Film userLikeDelete(@PathVariable("id") @NotNull Integer id, @PathVariable("userId") @NotNull Integer userId) {
+        filmService.deleteLike(id, userId);
+        feedService.createLikeDeletion(userId, id);
+        return filmService.getFilm(id);
     }
 
     @GetMapping(value = "/popular", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> filmPopular(@RequestParam(defaultValue = "10") Integer count,
-                                         @RequestParam(required = false) Integer genreId,
-                                         @RequestParam(required = false) Integer year) {
-        List<Film> popularFilms = filmService.popularFilm(count, genreId, year);
-        return new ResponseEntity<>(popularFilms, HttpStatus.OK);
+    public List<Film> filmPopular(@RequestParam(defaultValue = "10") Integer count,
+                                  @RequestParam(required = false) Integer genreId,
+                                  @RequestParam(required = false) Integer year) {
+        return filmService.popularFilm(count, genreId, year);
     }
 
     @DeleteMapping(value = "/{id}")
@@ -118,9 +94,8 @@ public class FilmController {
     }
 
     @GetMapping(value = "/director/{directorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getFilmsByDirectorId(@PathVariable int directorId,
-                                                  @RequestParam String sortBy) {
-        List<Film> films = filmService.getFilmsByDirector(directorId, sortBy);
-        return new ResponseEntity<>(films, HttpStatus.OK);
+    public List<Film> getFilmsByDirectorId(@PathVariable int directorId,
+                                           @RequestParam String sortBy) {
+        return filmService.getFilmsByDirector(directorId, sortBy);
     }
 }

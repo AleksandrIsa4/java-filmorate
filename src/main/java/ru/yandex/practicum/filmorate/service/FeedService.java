@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.storage.FeedDbStorage;
 
@@ -19,7 +21,11 @@ public class FeedService {
     private final FeedDbStorage storage;
 
     public List<Event> getFeed(Integer id) {
-        return storage.getFeed(id);
+        List<Event> event = storage.getFeed(id);
+        if (event == null) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "event id not found");
+        }
+        return event;
     }
 
     public void createLikeAddition(int userId, int filmId) {

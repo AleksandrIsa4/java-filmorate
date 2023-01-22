@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewsDBStorage;
 
@@ -22,11 +24,19 @@ public class ReviewService {
     }
 
     public Review putReview(Review review) {
-        return reviewsDBStorage.putReview(review);
+        Review currentReview = reviewsDBStorage.putReview(review);
+        if (currentReview == null) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "review id not found");
+        }
+        return currentReview;
     }
 
     public Review getReviewById(Integer id) {
-        return reviewsDBStorage.getReviewById(id);
+        Review currentReview = reviewsDBStorage.getReviewById(id);
+        if (currentReview == null) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "review id not found");
+        }
+        return currentReview;
     }
 
     public void deleteReview(Integer reviewId) {

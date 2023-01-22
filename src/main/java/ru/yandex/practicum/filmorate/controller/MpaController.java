@@ -35,14 +35,7 @@ public class MpaController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> mpaId(@PathVariable("id") @NotNull Integer id) {
-        Rating currentRating = mpaService.getMpaId(id);
-        if (currentRating == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", id);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(currentRating, HttpStatus.OK);
+    public Rating mpaId(@PathVariable("id") @NotNull Integer id) {
+        return mpaService.getMpaId(id);
     }
 }

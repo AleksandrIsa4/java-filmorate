@@ -6,6 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.BadRequestException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.ReviewService;
@@ -30,47 +32,28 @@ public class ReviewController {
     private final FeedService feedService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> postReview(@RequestBody @Valid @NotNull Review review) {
+    public Review postReview(@RequestBody @Valid @NotNull Review review) {
         if (review.getUserId() == 0 || review.getFilmId() == 0) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", review.getReviewId());
-            body.put("Код ошибки", HttpStatus.BAD_REQUEST.value());
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Bad request. Review couldn't be null.");
         }
         Review currentReview = reviewService.postReview(review);
         if (currentReview == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", review.getReviewId());
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "review id not found");
         }
         feedService.createReviewAddition(currentReview.getUserId(), currentReview.getReviewId());
-        return new ResponseEntity<>(currentReview, HttpStatus.OK);
+        return currentReview;
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> reviewUpdate(@RequestBody @Valid @NotNull Review review) {
+    public Review reviewUpdate(@RequestBody @Valid @NotNull Review review) {
         Review currentReview = reviewService.putReview(review);
-        if (currentReview == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", review.getReviewId());
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        }
         feedService.createReviewUpdate(currentReview.getUserId(), currentReview.getReviewId());
-        return new ResponseEntity<>(currentReview, HttpStatus.OK);
+        return currentReview;
     }
 
     @GetMapping(value = "/{reviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getReviewById(@PathVariable("reviewId") @NotNull Integer reviewId) {
-        Review currentReview = reviewService.getReviewById(reviewId);
-        if (currentReview == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", reviewId);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(currentReview, HttpStatus.OK);
+    public Review getReviewById(@PathVariable("reviewId") @NotNull Integer reviewId) {
+        return reviewService.getReviewById(reviewId);
     }
 
 
@@ -87,7 +70,6 @@ public class ReviewController {
                                                   @RequestParam(value = "count", defaultValue = "10", required = false)
                                                   String count) {
         return reviewService.getReviewsWithCount(Integer.parseInt(filmId), Integer.parseInt(count));
-
     }
 
     @PutMapping(value = "/{id}/like/{userId}")
@@ -105,14 +87,12 @@ public class ReviewController {
     @DeleteMapping(value = "/{id}/like/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteLike(@PathVariable("id") @NotNull Integer id,
                            @PathVariable("userId") @NotNull Integer userId) {
-
         reviewService.deleteLike(id, userId);
     }
 
     @DeleteMapping(value = "/{id}/dislike/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteDislike(@PathVariable("id") @NotNull Integer id,
                               @PathVariable("userId") @NotNull Integer userId) {
-
         reviewService.deleteDislike(id, userId);
     }
 }
