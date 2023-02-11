@@ -1,7 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
@@ -18,6 +21,10 @@ public class MpaService {
     }
 
     public Rating getMpaId(Integer id) {
-        return mpaStorage.getMpaId(id);
+        Rating rating = mpaStorage.getMpaId(id);
+        if (rating == null) {
+            throw new NotFoundException(HttpStatus.NOT_FOUND, "rating id not found");
+        }
+        return rating;
     }
 }

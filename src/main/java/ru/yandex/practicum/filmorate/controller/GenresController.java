@@ -35,14 +35,7 @@ public class GenresController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> genreId(@PathVariable("id") @NotNull Integer id) {
-        Genre currentGenre = genresService.getGenreId(id);
-        if (currentGenre == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", id);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(currentGenre, HttpStatus.OK);
+    public Genre genreId(@PathVariable("id") @NotNull Integer id) {
+        return genresService.getGenreId(id);
     }
 }

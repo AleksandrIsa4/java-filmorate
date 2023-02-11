@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -87,6 +88,11 @@ public class InMemoryUserStorage implements UserStorage {
             friends.add(users.get(i));
         }
         return friends;
+    }
+
+    @Override
+    public List<Film> getUserIdRecomment(Integer id) {
+        throw new UnsupportedOperationException();
     }
 
     private void additionUser(User user) {

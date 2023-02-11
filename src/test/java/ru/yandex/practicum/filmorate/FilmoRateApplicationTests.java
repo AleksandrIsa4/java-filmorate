@@ -85,7 +85,7 @@ class FilmoRateApplicationTests {
     @Test
     public void testGetMemoryFilms() {
         Collection<Film> films = filmDbStorage.getMemoryFilms();
-        Film film = new Film(2, "nisi eiusmod2", "adipisicing2", LocalDate.parse("1967-03-22"), 102, new HashSet<>(), 2, new Rating(2, "PG"), new ArrayList<>());
+        Film film = new Film(2, "nisi eiusmod2", "adipisicing2", LocalDate.parse("1967-03-22"), 102, new HashSet<>(), 2, new Rating(2, "PG"), new ArrayList<>(), null);
         Assertions.assertEquals(films.toArray()[1], film);
         Assertions.assertEquals(films.size(), 3);
     }
@@ -94,7 +94,7 @@ class FilmoRateApplicationTests {
     @Test
     public void testGetFilmId() {
         Film film = filmDbStorage.getFilmId(3);
-        Film film2 = new Film(3, "nisi eiusmod3", "adipisicing3", LocalDate.parse("1967-03-23"), 103, new HashSet<>(), 3, new Rating(3, "PG-13"), new ArrayList<>());
+        Film film2 = new Film(3, "nisi eiusmod3", "adipisicing3", LocalDate.parse("1967-03-23"), 103, new HashSet<>(), 3, new Rating(3, "PG-13"), new ArrayList<>(), null);
         Assertions.assertEquals(film, film2);
     }
 
@@ -118,7 +118,7 @@ class FilmoRateApplicationTests {
 
     @Test
     public void testCountPopularFilm() {
-        List<Film> films = filmDbStorage.countPopularFilm(2);
+        List<Film> films = filmDbStorage.countPopularFilm(2, null, null);
         Assertions.assertEquals(films.get(0).getName(), "nisi eiusmod3");
         Assertions.assertEquals(films.get(1).getName(), "nisi eiusmod2");
     }

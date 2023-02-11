@@ -6,7 +6,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.BadRequestException;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
@@ -24,6 +28,7 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
+    private final FeedService feedService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public User userAdd(@RequestBody @Valid User user) {
@@ -31,15 +36,11 @@ public class UserController {
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> userUpdate(@RequestBody @Valid @NotNull User user) {
-        User currentUser = userService.changeUser(user);
-        if (currentUser == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", user.getId());
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    public User userUpdate(@RequestBody @Valid @NotNull User user) {
+        if (user == null) {
+            throw new BadRequestException("Bad request. User couldn't be null.");
         }
-        return new ResponseEntity<>(currentUser, HttpStatus.OK);
+        return userService.changeUser(user);
     }
 
     @GetMapping
@@ -48,79 +49,53 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> userId(@PathVariable("id") @NotNull Integer id) {
-        User currentUser = userService.getUser(id);
-        if (currentUser == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", id);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(currentUser, HttpStatus.OK);
+    public User userId(@PathVariable("id") @NotNull Integer id) {
+        return userService.getUser(id);
     }
 
     @PutMapping(value = "/{id}/friends/{friendId}")
-    public ResponseEntity<?> userFriendsUpdate(@PathVariable("id") @NotNull Integer id, @PathVariable("friendId") @NotNull Integer friendId) {
+    public User userFriendsUpdate(@PathVariable("id") @NotNull Integer id, @PathVariable("friendId") @NotNull Integer friendId) {
         if (id == friendId) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись повторяется c id ", id);
-            body.put("Код ошибки", HttpStatus.BAD_REQUEST.value());
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Bad request. Film couldn't be null.");
         }
-        // Если idBody не Null, значит один из пользователей с Id не найден
-        Integer idBody = userService.changeFriend(id, friendId);
-        if (idBody != null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", idBody);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
-        }
+        userService.changeFriend(id, friendId);
+        feedService.createFriendAddition(id, friendId);
+        return userService.getUser(id);
     }
 
     @DeleteMapping(value = "/{id}/friends/{friendId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> userFriendsDelete(@PathVariable("id") @NotNull Integer id, @PathVariable("friendId") @NotNull Integer friendId) {
+    public User userFriendsDelete(@PathVariable("id") @NotNull Integer id, @PathVariable("friendId") @NotNull Integer friendId) {
         if (id == friendId) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись повторяется c id ", id);
-            body.put("Код ошибки", HttpStatus.BAD_REQUEST.value());
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Bad request. Film couldn't be null.");
         }
-        // Если idBody не Null, значит один из пользователей с Id не найден
-        Integer idBody = userService.deleteFriend(id, friendId);
-        if (idBody != null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", idBody);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
-        }
+        userService.deleteFriend(id, friendId);
+        feedService.createFriendDeletion(id, friendId);
+        return userService.getUser(id);
     }
 
     @GetMapping(value = "/{id}/friends", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> userIdFriend(@PathVariable("id") @NotNull Integer id) {
-        List<User> friends = userService.getUserFriend(id);
-        if (friends == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Запись не найдена с id ", id);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(friends, HttpStatus.OK);
+    public List<User> userIdFriend(@PathVariable("id") @NotNull Integer id) {
+        return userService.getUserFriend(id);
     }
 
     @GetMapping(value = "/{id}/friends/common/{otherId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> usersCommonFriend(@PathVariable("id") @NotNull Integer id, @PathVariable("otherId") @NotNull Integer otherId) {
-        List<User> friends = userService.getCommonFriend(id, otherId);
-        if (friends == null) {
-            Map<String, Object> body = new LinkedHashMap<>();
-            body.put("Возможно не найдена запись id User ", id);
-            body.put("Возможно не найдена запись id OtherUser ", otherId);
-            body.put("Код ошибки", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(friends, HttpStatus.OK);
+    public List<User> usersCommonFriend(@PathVariable("id") @NotNull Integer id, @PathVariable("otherId") @NotNull Integer otherId) {
+        return userService.getCommonFriend(id, otherId);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Integer> userDelete(@PathVariable("id") @NotNull Integer id) {
+        userService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}/feed")
+    public List<Event> findFeed(@PathVariable @NotNull Integer id) {
+        return feedService.getFeed(id);
+    }
+
+    @GetMapping(value = "/{id}/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Film> userIdRecomment(@PathVariable("id") @NotNull Integer id) {
+        return userService.getUserRecomment(id);
     }
 }
